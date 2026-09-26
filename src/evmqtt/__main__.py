@@ -128,7 +128,7 @@ class Application:
         self._mqtt_client: MQTTClientWrapper | None = None
         self._monitors: list[InputMonitor] = []
         self._monitors_by_path: dict[str, InputMonitor] = {}
-        self._key_handler = KeyHandler()
+        self._key_handler = KeyHandler.from_config(config.keystates)
         self._shutdown_requested = False
 
     def start(self) -> None:
