@@ -128,13 +128,13 @@ jobs:
       -
         name: Smoke test
         run: |
-          digest="${{ steps.build.outputs.digest }}"
-          image="${{ env.REGISTRY_IMAGE }}@${digest}"
+          image="${{ env.REGISTRY_IMAGE }}@${{ steps.build.outputs.digest }}"
           docker run --rm "${image}" evmqtt --help
           status=0
           docker run --rm "${image}" evmqtt --list-devices || status=$?
           test "${status}" -eq 1
       -
+        name: Lint HA configuration
         uses: frenck/action-app-linter@v2.21.1
         with:
           path: "."
