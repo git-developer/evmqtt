@@ -28,10 +28,8 @@ jobs:
         include:
           - platform: linux/amd64
             os: ubuntu-latest
-            base_image: ghcr.io/home-assistant/amd64-base-python
           - platform: linux/arm64
             os: ubuntu-26.04-arm
-            base_image: ghcr.io/home-assistant/aarch64-base-python
 
     steps:
       -
@@ -65,7 +63,6 @@ jobs:
         with:
           context: .
           build-args: |
-            BUILD_FROM=${{ matrix.base_image }}
             BUILD_NAME=${{ github.event.repository.name }}
             BUILD_DESCRIPTION=${{ github.event.repository.description }}
             BUILD_VERSION=${{ steps.meta.outputs.version }}
