@@ -118,6 +118,7 @@ When running as a Home Assistant add-on, configure via the Supervisor UI:
 | **MQTT Topic** | Base topic for events (e.g., `homeassistant/sensor/evmqtt`) |
 | **Auto Discover** | Enable automatic discovery of all input devices (default: `true`) |
 | **Filter Keys Only** | Only include devices with key capabilities (default: `true`) |
+| **Keystates** | List of states to report (`PRESS`, `RELEASE`, `REPEAT`, default: `[ "PRESS" ]`) |
 | **Input Devices** | Manual list of device paths (when auto-discover is disabled) |
 | **Enabled Devices** | List of device paths to enable by default (when auto-discover is enabled) |
 | **Log Level** | Logging verbosity: `debug`, `info`, `warning`, `error` |
@@ -206,6 +207,15 @@ When running in a container, add a volume for the custom CA certificate:
 
 When TLS is enabled, the default MQTT port is 8883, and the `port` key may be omitted.
 
+#### Keystates
+By default, only key _presses_ are reported.
+To customize this, set `keystates` to a combination of `PRESS`, `RELEASE` and `REPEAT`:
+```json
+{
+  "keystates": [ "PRESS", "RELEASE", "REPEAT" ],
+}
+```
+
 ### Finding Input Devices
 
 List available input devices:
@@ -272,7 +282,8 @@ Events are published as JSON to `{topic}/{device-slug}/state`:
 {
   "key": "KEY_VOLUMEUP",
   "devicePath": "/dev/input/event3",
-  "deviceName": "gpio_ir_recv"
+  "deviceName": "gpio_ir_recv",
+  "state": "PRESS"
 }
 ```
 
@@ -282,7 +293,8 @@ With modifier keys held:
 {
   "key": "KEY_A_KEY_LEFTSHIFT_KEY_LEFTCTRL",
   "devicePath": "/dev/input/event0",
-  "deviceName": "USB Keyboard"
+  "deviceName": "USB Keyboard",
+  "state": "PRESS"
 }
 ```
 
