@@ -30,7 +30,7 @@ jobs:
             os: ubuntu-latest
             base_image: ghcr.io/home-assistant/amd64-base-python
           - platform: linux/arm64
-            os: ubuntu-24.04-arm
+            os: ubuntu-26.04-arm
             base_image: ghcr.io/home-assistant/aarch64-base-python
 
     steps:
