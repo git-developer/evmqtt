@@ -40,6 +40,8 @@ class Config:
     auto_discover: bool = False
     enabled_devices: list[str] = field(default_factory=list)
     filter_keys_only: bool = True
+    tls: bool = False
+    tls_ca: str = ""
 
     def __post_init__(self) -> None:
         """Validate configuration after initialization."""
@@ -69,11 +71,15 @@ class Config:
             KeyError: If required fields are missing.
             ValueError: If field values are invalid.
         """
+        tls=data.get("tls", False)
+        tls_ca=data.get("tls_ca", "")
         return cls(
             serverip=data["serverip"],
-            port=data["port"],
-            username=data["username"],
-            password=data["password"],
+            port=data.get("port", 8883 if tls or tls_ca else 1883),
+            username=data.get("username", ""),
+            password=data.get("password", ""),
+            tls=tls,
+            tls_ca=tls_ca,
             name=data["name"],
             topic=data["topic"],
             devices=data.get("devices", []),
