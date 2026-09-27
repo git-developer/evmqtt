@@ -128,7 +128,8 @@ jobs:
       -
         name: Smoke test
         run: |
-          image="${{ env.REGISTRY_IMAGE }}:${{ steps.build.outputs.digest }}"
+          digest="${{ steps.build.outputs.digest }}"
+          image="${{ env.REGISTRY_IMAGE }}:${digest#sha256:}"
           docker run --rm "${image}" evmqtt --help
           status=0
           docker run --rm "${image}" evmqtt --list-devices || status=$?
