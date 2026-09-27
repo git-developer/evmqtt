@@ -24,16 +24,19 @@ from tests.fakes import (
 
 BASE_TOPIC = "homeassistant/sensor/evmqtt"
 
-
-def make_wrapper(fake_mqtt) -> MQTTClientWrapper:
-    config = Config.from_dict(
+def make_config(extra_entries: dict) -> Config:
+    return Config.from_dict(
         {
             "serverip": "broker.local",
             "name": "Gateway",
             "topic": BASE_TOPIC,
             "devices": ["/dev/input/event0"],
-        }
+        } | extra_entries
     )
+
+
+def make_wrapper(fake_mqtt) -> MQTTClientWrapper:
+    config = make_config({})
     return MQTTClientWrapper("test-client", config)
 
 
@@ -298,5 +301,42 @@ def test_modifier_suffix_survives_autorepeat_hold(fake_evdev, fake_mqtt) -> None
         assert wait_for(lambda: published(wrapper.client, monitor.state_topic))
         payload = last_payload(wrapper, monitor.state_topic)
         assert payload["key"] == "KEY_A_KEY_LEFTSHIFT"
+    finally:
+        stop_and_join(device, monitor)
+
+def test_keystate_default_is_press_only(fake_evdev, fake_mqtt) -> None:
+    wrapper = make_wrapper(fake_mqtt)
+    device, monitor = make_monitor(fake_evdev, wrapper)
+    monitor.start()
+    try:
+        device.push(press("KEY_A"))
+        device.push(hold("KEY_A"))
+        device.push(release("KEY_A"))
+        assert wait_for(lambda: published(wrapper.client, monitor.state_topic))
+        payload = last_payload(wrapper, monitor.state_topic)
+        assert payload["state"] == "PRESS"
+    finally:
+        stop_and_join(device, monitor)
+
+def test_keystates_are_reported_when_enabled(fake_evdev, fake_mqtt) -> None:
+    config = make_config({ "keystates": [ "RELEASE", "PRESS", "REPEAT" ] })
+    wrapper = MQTTClientWrapper("test-client", config)
+    device, monitor = make_monitor(fake_evdev, wrapper)
+    monitor.start()
+    try:
+        device.push(press("KEY_A"))
+        assert wait_for(lambda: published(wrapper.client, monitor.state_topic))
+        payload = last_payload(wrapper, monitor.state_topic)
+        assert payload["state"] == "PRESS"
+
+        device.push(hold("KEY_A"))
+        assert wait_for(lambda: published(wrapper.client, monitor.state_topic))
+        payload = last_payload(wrapper, monitor.state_topic)
+        assert payload["state"] == "REPEAT"
+
+        device.push(release("KEY_A"))
+        assert wait_for(lambda: published(wrapper.client, monitor.state_topic))
+        payload = last_payload(wrapper, monitor.state_topic)
+        assert payload["state"] == "RELEASE"
     finally:
         stop_and_join(device, monitor)
