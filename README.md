@@ -70,7 +70,7 @@ docker run -d \
 Or use Docker Compose (also expects a `config.json` created from `config.example.json` as above):
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 ### Option 3: Python Package
