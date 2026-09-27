@@ -66,7 +66,10 @@ jobs:
           context: .
           build-args: |
             BUILD_FROM=${{ matrix.base_image }}
-            GITHUB_REPO=${{ matrix.github_repo }}
+            BUILD_NAME=${{ github.event.repository.name }}
+            BUILD_DESCRIPTION=${{ github.event.repository.description }}
+            BUILD_VERSION=${{ steps.meta.outputs.version }}
+
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
