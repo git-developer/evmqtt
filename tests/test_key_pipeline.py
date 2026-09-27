@@ -31,7 +31,8 @@ def make_config(extra_entries: dict) -> Config:
             "name": "Gateway",
             "topic": BASE_TOPIC,
             "devices": ["/dev/input/event0"],
-        } | extra_entries
+        }
+        | extra_entries
     )
 
 
@@ -304,6 +305,7 @@ def test_modifier_suffix_survives_autorepeat_hold(fake_evdev, fake_mqtt) -> None
     finally:
         stop_and_join(device, monitor)
 
+
 def test_keystate_default_is_press_only(fake_evdev, fake_mqtt) -> None:
     wrapper = make_wrapper(fake_mqtt)
     device, monitor = make_monitor(fake_evdev, wrapper)
@@ -318,8 +320,9 @@ def test_keystate_default_is_press_only(fake_evdev, fake_mqtt) -> None:
     finally:
         stop_and_join(device, monitor)
 
+
 def test_keystates_are_reported_when_enabled(fake_evdev, fake_mqtt) -> None:
-    config = make_config({ "keystates": [ "RELEASE", "PRESS", "REPEAT" ] })
+    config = make_config({"keystates": ["RELEASE", "PRESS", "REPEAT"]})
     wrapper = MQTTClientWrapper("test-client", config)
     device, monitor = make_monitor(fake_evdev, wrapper)
     monitor.start()
