@@ -59,7 +59,7 @@ docker run -d \
   --name evmqtt \
   --network host \
   --device=/dev/input/event3 \
-  -v $(pwd)/config.json:/app/config.json \
+  -v $(pwd)/config.json:/data/config.json \
   evmqtt
 ```
 
