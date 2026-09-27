@@ -24,6 +24,7 @@ from tests.fakes import (
 
 BASE_TOPIC = "homeassistant/sensor/evmqtt"
 
+
 def make_config(extra_entries: dict) -> Config:
     return Config.from_dict(
         {
